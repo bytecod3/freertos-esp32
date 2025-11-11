@@ -56,6 +56,8 @@ void get_random_number_task(void* pv_parameters) {
 		}
 		taskEXIT_CRITICAL(&heartbeat_mux);
 
+		vTaskDelay(pdMS_TO_TICKS(5));
+
 	}
 
 }
@@ -70,7 +72,7 @@ void read_time_task(void* pv_parameters) {
 
 	for(;;) {
 
-		ESP_LOGI("read time task", "reading time");
+		//ESP_LOGI("read time task", "reading time");
 
 		taskENTER_CRITICAL(&heartbeat_mux);
 		{
@@ -93,6 +95,8 @@ void read_mpu_task(void* pv_parameters) {
 
 	for(;;) {
 
+		vTaskDelay(pdMS_TO_TICKS(250));
+
 		/* simulate reading x, y, z values */
 
 		taskENTER_CRITICAL(&heartbeat_mux);
@@ -114,7 +118,12 @@ void read_mpu_task(void* pv_parameters) {
  */
 void watchdog_manager_task(void* pv_parameters) {
 
+	TickType_t last_wake_time = xTaskGetTickCount();
+	const TickType_t watchdog_window = 100;
+
 	for(;;) {
+		/* wait for next cycle */
+		vTaskDelayUntil(&last_wake_time, watchdog_window);
 
 
 		/* read the heartbeat flag and check for hanging task */
@@ -136,7 +145,7 @@ void watchdog_manager_task(void* pv_parameters) {
 			/* read mpu task is working OK */
 			ESP_LOGI("watchdog manager", "read MPU task OK");
 		} else {
-			ESP_LOGE("watchdog manager", "read MPU task, resetting");
+			ESP_LOGE("watchdog manager", "read MPU task frozen, resetting");
 		}
 
 		/* inspect the heartbeat flag */
