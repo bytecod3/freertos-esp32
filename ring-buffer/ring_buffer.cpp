@@ -32,7 +32,7 @@ uint8_t ring_buffer_empty(struct ring_buffer* buffer) {
 }
 
 uint8_t ring_buffer_full(struct ring_buffer* buffer) {
-    printf("head: %d\r\n", buffer->head);
+    
     if(buffer->head == RING_BUFFER_LENGTH) {
         return 1;
     } else {
@@ -46,7 +46,7 @@ void ring_buffer_add(struct ring_buffer* buffer, uint16_t item) {
         if(ring_buffer_full(buffer)) {
             buffer->head = buffer->head % RING_BUFFER_LENGTH;
         } 
-
+        printf("head: %d\r\n", buffer->head);
         buffer->data[buffer->head++] = item;
     }
 }
