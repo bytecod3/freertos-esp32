@@ -1,6 +1,7 @@
 /**
  * @brief This file tests a method of resetting the ESP32 in case of a software hang
  * @author edwin
+ * @date 11/11/2025
  *
  */
 
@@ -21,7 +22,10 @@ uint8_t heartbeat_flag = 0x00;
 
 /**
  * declare spinlock (mutex) variable first for use in critical section 
- * This is used specifically for esp32 because it has 2 cores, and track must be kept 
+ * This is used specifically for esp32 because it has 2 cores, and track must be kept for whcih core 
+ * has hod of the critical section. 
+ * 
+ * In other words we need to track the spinlock across the two cores 
 */
 portMUX_TYPE heartbeat_mux = portMUX_INITIALIZER_UNLOCKED;
 
@@ -34,8 +38,6 @@ struct position_3d {
 
 /* for logging */
 const char* debug_tag = "WATCHDOG";
-
-
 
 /**
  * @brief task 1 to simulate reading an actual sensor into integer queue
