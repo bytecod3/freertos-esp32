@@ -93,7 +93,6 @@ int main() {
 
 	/* file to store filtered values with median filter */
 	
-
 	/* array to store the read values */
 	int ppm_raw[MAX_VALUES] = {0};
 	int ppm_movavg_filtered[MAX_VALUES] = {0};
