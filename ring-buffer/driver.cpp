@@ -12,6 +12,14 @@
 
 struct ring_buffer buffer;
 
+/*************************************SHELL SORT*****************/
+
+void shell_sort(uint16_t a[], uint16_t l) {
+	
+
+}
+
+/*************************************SHELL SORT*****************/
 
 int main() {
 
@@ -33,7 +41,7 @@ int main() {
 	ring_buffer_add(buffer, 2);
 
 	// // show contents 
-	//dump_ring_buffer(buffer);
+	dump_ring_buffer(buffer);
 
 	// for(int i = 0; i< RING_BUFFER_LENGTH; i++) {
 	// 	printf("%d\r\n", buffer->data[i]);
@@ -50,60 +58,60 @@ int main() {
 	/**
 	 * Open csv raw file 
 	 */
-	FILE* fp = fopen("vaisala1_data_raw.csv", "r");
-	if(fp == NULL) {
-		printf("Error opening file ");
-	}
+	// FILE* fp = fopen("vaisala1_data_raw.csv", "r");
+	// if(fp == NULL) {
+	// 	printf("Error opening file ");
+	// }
 	
-	/* file to store filtered values */
-	FILE* fp_filt = fopen("vaisala1_filtered.csv", "w");
-	if(fp_filt == NULL) {
-		printf("Failed to open file for filtered data");
-	}
+	// /* file to store filtered values */
+	// FILE* fp_filt = fopen("vaisala1_filtered.csv", "w");
+	// if(fp_filt == NULL) {
+	// 	printf("Failed to open file for filtered data");
+	// }
 
-	/* array to store the read values */
-	int ppm_raw[MAX_VALUES] = {0};
-	int ppm_filtered[MAX_VALUES] = {0};
-	int index = 0;
+	// /* array to store the read values */
+	// int ppm_raw[MAX_VALUES] = {0};
+	// int ppm_filtered[MAX_VALUES] = {0};
+	// int index = 0;
 
-	while(fscanf(fp, "%d", &ppm_raw[index]) == 1) {
-		index++;
-		if(index >= MAX_VALUES) {
-			printf("Max values reached\r\n");
-			break;
-		}
+	// while(fscanf(fp, "%d", &ppm_raw[index]) == 1) {
+	// 	index++;
+	// 	if(index >= MAX_VALUES) {
+	// 		printf("Max values reached\r\n");
+	// 		break;
+	// 	}
 
-	}
+	// }
 
-	fclose(fp);
+	// fclose(fp);
 
 
-	// verify values 
-	for (int j = 0; j < index; j++) {
-		//printf("%d\r\n", ppm_raw[j]);
+	// // verify values 
+	// for (int j = 0; j < index; j++) {
+	// 	//printf("%d\r\n", ppm_raw[j]);
 
-		/* feed into ring buffer */
-		ring_buffer_add(buffer, (uint16_t)ppm_raw[j]);
+	// 	/* feed into ring buffer */
+	// 	ring_buffer_add(buffer, (uint16_t)ppm_raw[j]);
 
-		/* loop through the buffer find average */
-		int sum = 0;
-		int f = 0;
-		for(int i= 0; i < RING_BUFFER_LENGTH; i++) {
-			sum += buffer->data[i];
-			f = sum / RING_BUFFER_LENGTH;
-		}
+	// 	/* loop through the buffer find average */
+	// 	int sum = 0;
+	// 	int f = 0;
+	// 	for(int i= 0; i < RING_BUFFER_LENGTH; i++) {
+	// 		sum += buffer->data[i];
+	// 		f = sum / RING_BUFFER_LENGTH;
+	// 	}
 
-		/* write to array */
-		ppm_filtered[j] = f;
-	}
+	// 	/* write to array */
+	// 	ppm_filtered[j] = f;
+	// }
 
-	/* write filtered values to file */
-	int l = sizeof(ppm_filtered) / sizeof(ppm_filtered[0]);
-	for(int k = 0; k < l; k++) {
-		fprintf(fp_filt, "%d\n", ppm_filtered[k]);
-	}
+	// /* write filtered values to file */
+	// int l = sizeof(ppm_filtered) / sizeof(ppm_filtered[0]);
+	// for(int k = 0; k < l; k++) {
+	// 	fprintf(fp_filt, "%d\n", ppm_filtered[k]);
+	// }
 
-	fclose(fp_filt);
+	// fclose(fp_filt);
 
 	return 0;
 }
