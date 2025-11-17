@@ -25,7 +25,7 @@ typedef enum
     ERR_FATAL = -3
 } ERR;
 
-#define  RING_BUFFER_LENGTH   (6)       ///< how many items the buffer can hold 
+#define  RING_BUFFER_LENGTH   (10)       ///< how many items the buffer can hold 
 
 
 struct ring_buffer {
