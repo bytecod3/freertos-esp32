@@ -11,6 +11,9 @@
 #include <cstring>
 #include <cstdlib>
 
+#define DUMP_LINEAR     (1)  ///< print array in a straight line 
+#define DUMP_VERTICAL   (0)  ///< printf array in vertical fashion showing index and value
+
 /**
  * Errors list for ring buffer functions 
  */
@@ -38,6 +41,6 @@ uint8_t ring_buffer_empty(ring_buffer_t buffer);
 uint8_t ring_buffer_full(ring_buffer_t buffer);
 void ring_buffer_add(ring_buffer_t buffer, uint16_t item);
 void ring_buffer_remove();
-void ring_buffer_purge();
-uint8_t check_not_null(uint16_t*);
+void ring_buffer_purge(ring_buffer_t);
+uint8_t check_not_null(ring_buffer_t);
 void dump_ring_buffer(ring_buffer_t buffer);

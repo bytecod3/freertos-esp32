@@ -2,7 +2,7 @@
  * driver.cpp
  *
  *  Created on: 14 Nov 2025
- *      Author: emwit
+ *      Author: emwiti
  */
 
 #include <iostream>
@@ -12,18 +12,36 @@
 
 struct ring_buffer buffer;
 
-/*************************************SHELL SORT*****************/
+/*******************************INSERTION SORT*****************/
 
-void shell_sort(uint16_t a[], uint16_t l) {
-	
+void insertion_sort(uint16_t arr[], uint16_t len) {
 
+	for(int step =1; step < len; step++) {
+		int key = arr[step];
+		int j = step - 1;
+
+		while (j >= 0 && (key < arr[j])) {
+			arr[j + 1] = arr[j];
+			--j;
+		}
+
+		arr[j + 1] = key;
+	}
+}
+
+void dump_array(uint16_t arr[], uint16_t len) {
+	for(int i = 0; i < len; i++) {
+		printf("%d ", arr[i]);
+	}
+
+	puts("\r\n");
 }
 
 /*************************************SHELL SORT*****************/
 
 int main() {
 
-	struct ring_buffer* buffer = ring_buffer_init();
+	ring_buffer_t buffer = ring_buffer_init();
 
 	// test if empty 
 	// uint8_t ring_empty = ring_buffer_empty(buffer);
@@ -42,6 +60,18 @@ int main() {
 
 	// // show contents 
 	dump_ring_buffer(buffer);
+
+	// test buffer purging 
+	// ring_buffer_purge(buffer);
+
+	// sort the contents 
+
+	insertion_sort(buffer->data, RING_BUFFER_LENGTH);
+
+	// recheck the buffer contents
+	puts("\r\nsorted buffer\r\n");
+	dump_ring_buffer(buffer);
+
 
 	// for(int i = 0; i< RING_BUFFER_LENGTH; i++) {
 	// 	printf("%d\r\n", buffer->data[i]);
@@ -63,11 +93,14 @@ int main() {
 	// 	printf("Error opening file ");
 	// }
 	
-	// /* file to store filtered values */
-	// FILE* fp_filt = fopen("vaisala1_filtered.csv", "w");
+	// /* file to store filtered values with moving average */
+	// FILE* fp_filt = fopen("vaisala1_mov_avg_filtered.csv", "w");
 	// if(fp_filt == NULL) {
 	// 	printf("Failed to open file for filtered data");
 	// }
+
+	/* file to store filtered values with median filter */
+	
 
 	// /* array to store the read values */
 	// int ppm_raw[MAX_VALUES] = {0};

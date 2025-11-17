@@ -59,8 +59,7 @@ void ring_buffer_add(ring_buffer_t buffer, uint16_t item)
     if(buffer->data != NULL) {
         if(ring_buffer_full(buffer)) {
             buffer->head = buffer->head % RING_BUFFER_LENGTH;
-        } 
-        printf("head: %d\r\n", buffer->head);
+        }   
         buffer->data[buffer->head++] = item;
     }
 }
@@ -82,18 +81,21 @@ uint16_t ring_buffer_remove(ring_buffer_t buffer) {
 /**
  * @brief Set all values of the buffer to 0
  */
-void ring_buffer_purge(uint16_t* buffer) {
+void ring_buffer_purge(ring_buffer_t buffer) {
+    puts("\r\npurging buffer...");
     if(check_not_null(buffer)) {
-        memset(buffer, 0, RING_BUFFER_LENGTH);
+        for(int i = 0; i < RING_BUFFER_LENGTH; i++) {
+            buffer->data[i] = 0;
+        }
     }
 }
 
 /**
- * @brief Check that the pointer passed is not NULL
+ * @brief Check that the pointer to buffer passed is not NULL
  * @param b pointer to check
  */
-uint8_t check_not_null(uint16_t* b) {
-    return (b != NULL);
+uint8_t check_not_null(ring_buffer_t buffer) {
+    return (buffer != NULL);
 }
 
 /**
@@ -104,8 +106,16 @@ void dump_ring_buffer(ring_buffer_t buffer)
 {
     if(!ring_buffer_empty(buffer)) {
         for(uint8_t i = 0; i < RING_BUFFER_LENGTH; i++) {
-            printf("indx: [%d], value: %d\r\n", i, buffer->data[i]);
+
+            #if (DUMP_VERTICAL ^ DUMP_LINEAR)
+                #if DUMP_VERTICAL
+                            printf("indx: [%d], value: %d\r\n", i, buffer->data[i]);
+                #elif DUMP_LINEAR
+                            printf("%d ", buffer->data[i]);
+                #endif
+            #endif
         }
+
 
     } else {
         puts("Buffer is empty");
