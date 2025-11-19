@@ -6,87 +6,91 @@
 
 #include "ring_buffer.h"
 
-/**
- * @brief Initialize the ring buffer
- * @return 
- */
-ring_buffer_t ring_buffer_init() {
-    ring_buffer_t mem = (ring_buffer_t)malloc(sizeof(struct ring_buffer));
+RingBuffer::RingBuffer(uint8_t window_size) {
+    uint8_t _d_wndw_sz = 10;
 
-    if(mem != NULL) {
-        mem->head = 0;
-        mem->tail = 0;
-        memset(mem->data, 0, RING_BUFFER_LENGTH);
+    /* window size can only be max 255 */
+    if(window_size > UINT8_MAX) {
+        this->_window_size = _d_wndw_sz;
     } else {
-        return NULL;
+        this->_window_size = window_size;
     }
 
-    return mem;
+}
+
+/**
+ * @brief Initialize the ring buffer
+ * @return pointer to malloced buffer memory
+ */
+uint16_t* RingBuffer::init() {
+    this->_data = (uint16_t*) malloc(sizeof(uint16_t) * this->_window_size);
+    if(this->_data != nullptr) {
+        this->_head = 0;
+        this->_tail = 0;
+        memset(this->_data, 0, this->_window_size);
+    } else {
+        return nullptr;
+    }  
 }
 
 /**
  * @brief checks if the ring buffer is empty
  */
-uint8_t ring_buffer_empty(ring_buffer_t buffer)
-{
-    if(buffer->head == buffer->tail) {
+uint8_t RingBuffer::is_empty() {
+    if(this->_head == this->_tail) {
         return 1;
-    } else {
-        return ERR_EMPTY_FULL;
+    } else {    
+        return 0;
     }
 }
 
 /**
  * @brief Checks if the ring buffer is full
  */
-uint8_t ring_buffer_full(ring_buffer_t buffer)
-{
-    if(buffer->head == RING_BUFFER_LENGTH) {
+uint8_t RingBuffer::is_full() {
+    if(  ( (this->_head + 1) % this->_window_size ) == (this->_tail) ){
         return 1;
     } else {
-        return ERR_EMPTY_FULL;
+        return 0;
     }
 }
 
 /**
- * @brief Add an item to the buffer 
- * @param buffer pointer to the buffer location
+ * @brief Add an item to the buffer
  * @param item uint16_t item to add
  */
-void ring_buffer_add(ring_buffer_t buffer, uint16_t item)
-{
+void RingBuffer::add(uint16_t data) {
+    printf("add: %d \r\n", data);
 
-    if(buffer->data != NULL) {
-        if(ring_buffer_full(buffer)) {
-            buffer->head = buffer->head % RING_BUFFER_LENGTH;
-        }   
-        buffer->data[buffer->head++] = item;
+    if(this->is_full()) {
+        this->_head %= this->_window_size; /* wrap around */
     }
+
+    this->_data[this->_head++] = data;
+
 }
 
 /**
  * @brief Remove an item from the tail of the buffer 
- * @param buffer buffer to remove the item from
+ * @return removed item 
  */
-uint16_t ring_buffer_remove(ring_buffer_t buffer) {
-    if(buffer != NULL) {
-        uint16_t a = buffer->data[buffer->tail];
-        buffer->tail += 1;
-        return a;
-    } else {
-        return ERR_EMPTY_FULL;
+uint16_t RingBuffer::pop() {
+    uint16_t item;
+
+    if(this->is_not_null()) {
+        item = this->_data[this->_tail];
+        this->_tail = (this->_tail + 1) % this->_window_size;
     }
+
+    return this->_data[this->_tail];
 }
 
 /**
  * @brief Set all values of the buffer to 0
  */
-void ring_buffer_purge(ring_buffer_t buffer) {
-    puts("\r\npurging buffer...");
-    if(check_not_null(buffer)) {
-        for(int i = 0; i < RING_BUFFER_LENGTH; i++) {
-            buffer->data[i] = 0;
-        }
+void RingBuffer::set_zero() {
+    if (this->is_not_null()) {
+        memset(this->_data, 0, this->_window_size);
     }
 }
 
@@ -94,24 +98,24 @@ void ring_buffer_purge(ring_buffer_t buffer) {
  * @brief Check that the pointer to buffer passed is not NULL
  * @param b pointer to check
  */
-uint8_t check_not_null(ring_buffer_t buffer) {
-    return (buffer != NULL);
+uint8_t RingBuffer::is_not_null() {
+    return (this->_data != nullptr);
 }
 
 /**
  * @brief Print all the contents of the buffer
  * @param buffer ring buffer instance
+ * 
  */
-void dump_ring_buffer(ring_buffer_t buffer)
-{
-    if(!ring_buffer_empty(buffer)) {
-        for(uint8_t i = 0; i < RING_BUFFER_LENGTH; i++) {
+void RingBuffer::dump() {
+    if(is_not_null()) {
+        for(uint8_t i = 0; i < this->_window_size; i++) {
 
             #if (DUMP_VERTICAL ^ DUMP_LINEAR)
                 #if DUMP_VERTICAL
                             printf("indx: [%d], value: %d\r\n", i, buffer->data[i]);
                 #elif DUMP_LINEAR
-                            printf("%d ", buffer->data[i]);
+                            printf("%d ", this->_data[i]);
                 #endif
             #endif
         }

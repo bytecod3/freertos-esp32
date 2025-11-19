@@ -25,22 +25,25 @@ typedef enum
     ERR_FATAL = -3
 } ERR;
 
-#define  RING_BUFFER_LENGTH   (10)       ///< how many items the buffer can hold 
+/**
+* Ring buffer class declaration 
+*/
+class RingBuffer {
+    private:
+        uint8_t _window_size;
+        uint8_t _head;
+        uint8_t _tail;
+        uint16_t* _data;
+        
+    public:
+        RingBuffer(uint8_t window_size);
+        uint16_t* init();
 
-
-struct ring_buffer {
-    uint8_t head;
-    uint8_t tail;
-    uint16_t data[RING_BUFFER_LENGTH];
+        uint8_t is_empty();
+        uint8_t is_full();
+        void add(uint16_t item);
+        uint16_t pop();
+        void set_zero();
+        uint8_t is_not_null();
+        void dump();
 };
-
-typedef struct ring_buffer* ring_buffer_t;
-
-ring_buffer_t ring_buffer_init();
-uint8_t ring_buffer_empty(ring_buffer_t buffer);
-uint8_t ring_buffer_full(ring_buffer_t buffer);
-void ring_buffer_add(ring_buffer_t buffer, uint16_t item);
-void ring_buffer_remove();
-void ring_buffer_purge(ring_buffer_t);
-uint8_t check_not_null(ring_buffer_t);
-void dump_ring_buffer(ring_buffer_t buffer);
