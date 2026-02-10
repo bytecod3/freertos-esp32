@@ -58,6 +58,9 @@ int main() {
 	data_buffer.add(674);
 	data_buffer.add(909);
 	data_buffer.add(2);
+	data_buffer.add(909);
+	data_buffer.add(4555);
+	data_buffer.add(3442);
 
 	// show contents 
 	data_buffer.dump();

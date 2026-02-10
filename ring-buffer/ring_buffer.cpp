@@ -48,7 +48,8 @@ uint8_t RingBuffer::is_empty() {
  * @brief Checks if the ring buffer is full
  */
 uint8_t RingBuffer::is_full() {
-    if(  ( (this->_head + 1) % this->_window_size ) == (this->_tail) ){
+    printf("in full: %d\r\n", this->_head);
+    if( ( (this->_head) % this->_window_size ) == (this->_tail) ){
         return 1;
     } else {
         return 0;
@@ -60,14 +61,13 @@ uint8_t RingBuffer::is_full() {
  * @param item uint16_t item to add
  */
 void RingBuffer::add(uint16_t data) {
-    printf("add: %d \r\n", data);
+    //printf("add at %d: %d \r\n", this->_head, data);
 
     if(this->is_full()) {
-        this->_head %= this->_window_size; /* wrap around */
+        this->_head = this->_head % this->_window_size; /* wrap around */
     }
 
     this->_data[this->_head++] = data;
-
 }
 
 /**
